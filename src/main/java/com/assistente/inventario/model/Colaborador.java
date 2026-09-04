@@ -19,6 +19,9 @@ public class Colaborador {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
+    private String matricula;
+
+    @Column(nullable = false, unique = true, length = 150)
     private String nome;
 
     @Column(nullable = false, length = 150)
