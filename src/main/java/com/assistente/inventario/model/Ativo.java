@@ -43,7 +43,7 @@ public class Ativo {
   private String numeroSerie;
 
   @Column(name = "imei_1", length = 20)
-  private String imei_1;
+  private String imei1;
 
   @Column(name = "mac_address", length = 50)
   private String macAddress;

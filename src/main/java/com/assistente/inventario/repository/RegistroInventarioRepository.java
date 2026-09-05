@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface RegistroInventarioRepository extends JpaRepository<RegistroInventario, Long> {
-    List<RegistroInventario> findByAtivoInOrderByCriadoEmDesc(Long ativoId);
+    List<RegistroInventario> findByAtivoIdOrderByCriadoEmDesc(Long ativoId);
     List<RegistroInventario> findTop50ByOrderByCriadoEmDesc();
 }

@@ -94,7 +94,7 @@ public class InventarioService {
     ativo.setPatrimonio(dadosIa.patrimonio());
     ativo.setServiceTagSerial(dadosIa.serviceTagSerial());
     ativo.setNumeroSerie(dadosIa.numeroSerie());
-    ativo.setImei_1(dadosIa.imeil1());
+    ativo.setImei1(dadosIa.imeil1());
     ativo.setMacAddress(dadosIa.macAddress());
     ativo.setProcessador(dadosIa.processador());
     ativo.setStatus("EM_USO");
@@ -142,7 +142,7 @@ public class InventarioService {
         ativoSalvo.getPatrimonio(),
         ativoSalvo.getServiceTagSerial(),
         ativoSalvo.getNumeroSerie(),
-        ativoSalvo.getImei_1(),
+        ativoSalvo.getImei1(),
         ativoSalvo.getMacAddress(),
         ativoSalvo.getLinhaCorporativa(),
         ativoSalvo.getProcessador(),
