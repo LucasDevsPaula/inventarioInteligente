@@ -20,26 +20,28 @@ import java.util.List;
 @Slf4j
 @Service
 public class GeminiVisionService {
-    private final Client client;
-    private final ObjectMapper objectMapper;
+  private final Client client;
+  private final ObjectMapper objectMapper;
 
-    public GeminiVisionService(@Value("${gemini.api.key}") String apikey){
-        this.client = Client.builder().apiKey(apikey).build();
-        this.objectMapper = new ObjectMapper();
-    }
+  public GeminiVisionService(@Value("${gemini.api.key}") String apikey) {
+    this.client = Client.builder().apiKey(apikey).build();
+    this.objectMapper = new ObjectMapper();
+  }
 
-    public DadosExtraidosFotoDto extrairDados(List<MultipartFile> files, TipoEquipamento tipoInformado){
-        try{
-            if(files == null || files.isEmpty()){
-                throw new  IllegalArgumentException("Nenhuma imagem foi fornecida.");
-            }
+  public DadosExtraidosFotoDto extrairDados(
+      List<MultipartFile> files, TipoEquipamento tipoInformado) {
+    try {
+      if (files == null || files.isEmpty()) {
+        throw new IllegalArgumentException("Nenhuma imagem foi fornecida.");
+      }
 
-            String tipoHint = (tipoInformado != null) ? tipoInformado.name() : "NÃO ESPECIFICADO";
+      String tipoHint = (tipoInformado != null) ? tipoInformado.name() : "NÃO ESPECIFICADO";
 
-            String prompt = """
+      String prompt =
+          """
                 Você é um especialista em inventário de ativos de TI.
                 O usuário indicou que o tipo do equipamento é: %s.
-                
+
                 Analise a imagem da etiqueta/tela e extraia as seguintes informações:
                 1. "equipamento": DESKTOP, MONITOR, SMARTPHONE, NOTEBOOK, etc.
                 2. "fabricante": Dell, HP, Motorola, Samsung, Lenovo, Apple, etc.
@@ -52,53 +54,42 @@ public class GeminiVisionService {
                 9. "linhaCorporativa": Número de telefone/chip corporativo se visível na tela (ex: Vivo - (11) 91450-9855).
                 10. "processador": Processador se visível na etiqueta ou característico do modelo.
                 11. "localizacao": Endereço ou aeroporto/cidade presente no carimbo de GPS da foto.
-                
+
                 Retorne EXCLUSIVAMENTE um JSON válido com esses campos (use null para o que não encontrar), sem markdown extra.
-                """.formatted(tipoHint);
+                """
+              .formatted(tipoHint);
 
-            List<Part> partes = new ArrayList<>();
+      List<Part> partes = new ArrayList<>();
 
-            partes.add(Part.builder()
-                    .text(prompt)
-                    .build());
+      partes.add(Part.builder().text(prompt).build());
 
-            for(MultipartFile file : files){
-                if(file != null && !file.isEmpty()){
-                    String mimeType =  file.getContentType() != null ? file.getContentType(): "image/jpeg";
+      for (MultipartFile file : files) {
+        if (file != null && !file.isEmpty()) {
+          String mimeType = file.getContentType() != null ? file.getContentType() : "image/jpeg";
 
-                    String base64Data = Base64.getEncoder().encodeToString(file.getBytes());
-                    Part fotoPart = Part.builder()
-                            .inlineData(Blob.builder()
-                                    .data(base64Data)
-                                    .mimeType(mimeType)
-                                    .build()).build();
+          String base64Data = Base64.getEncoder().encodeToString(file.getBytes());
+          Part fotoPart =
+              Part.builder()
+                  .inlineData(Blob.builder().data(base64Data).mimeType(mimeType).build())
+                  .build();
 
-                    partes.add(fotoPart);
-                }
-            }
-
-            Content content = Content.builder()
-                    .parts(partes)
-                    .build();
-
-            GenerateContentResponse response = client.models.generateContent(
-                    "gemini-2.5-flash",
-                    content,
-                    null
-            );
-
-            String rawJson = response.text()
-                    .replaceAll("```json", "")
-                    .replaceAll("```", "")
-                    .trim();
-
-            log.info("JSON extraído pela IA: {}", rawJson);
-            return  objectMapper.readValue(rawJson, DadosExtraidosFotoDto.class);
-
-
-        }catch (Exception e) {
-            log.error("Erro ao extrair dados da imegem com o Gemini: {}", e.getMessage(), e);
-            throw new RuntimeException("Falha no processamento visual da imagem: " + e.getMessage(), e);
+          partes.add(fotoPart);
         }
+      }
+
+      Content content = Content.builder().parts(partes).build();
+
+      GenerateContentResponse response =
+          client.models.generateContent("gemini-2.5-flash", content, null);
+
+      String rawJson = response.text().replaceAll("```json", "").replaceAll("```", "").trim();
+
+      log.info("JSON extraído pela IA: {}", rawJson);
+      return objectMapper.readValue(rawJson, DadosExtraidosFotoDto.class);
+
+    } catch (Exception e) {
+      log.error("Erro ao extrair dados da imegem com o Gemini: {}", e.getMessage(), e);
+      throw new RuntimeException("Falha no processamento visual da imagem: " + e.getMessage(), e);
     }
+  }
 }
