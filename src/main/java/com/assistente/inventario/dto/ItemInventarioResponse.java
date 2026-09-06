@@ -15,7 +15,7 @@ public record ItemInventarioResponse(
         String patrimonio,
         String serviceTagSerial,
         String numeroSerie,
-        String imeil1,
+        String imei1,
         String macAddress,
         String linhaCorporativa,
         String processador,

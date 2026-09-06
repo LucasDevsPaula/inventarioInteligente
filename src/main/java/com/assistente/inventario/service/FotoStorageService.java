@@ -38,8 +38,8 @@ public class FotoStorageService {
     String identificador = "SEM_ID";
     if (dados.patrimonio() != null && !dados.patrimonio().isBlank()) {
       identificador = dados.patrimonio().trim();
-    } else if (dados.imeil1() != null && !dados.imeil1().isBlank()) {
-      identificador = dados.imeil1().trim();
+    } else if (dados.imei1() != null && !dados.imei1().isBlank()) {
+      identificador = dados.imei1().trim();
     } else if (dados.serviceTagSerial() != null && !dados.serviceTagSerial().isBlank()) {
       identificador = dados.serviceTagSerial().trim();
     }

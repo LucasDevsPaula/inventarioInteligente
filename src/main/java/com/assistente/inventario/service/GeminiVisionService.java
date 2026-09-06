@@ -80,7 +80,7 @@ public class GeminiVisionService {
       Content content = Content.builder().parts(partes).build();
 
       GenerateContentResponse response =
-          client.models.generateContent("gemini-2.5-flash", content, null);
+          client.models.generateContent("gemini-3.6-flash", content, null);
 
       String rawJson = response.text().replaceAll("```json", "").replaceAll("```", "").trim();
 
