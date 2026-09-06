@@ -202,15 +202,25 @@ public class InventarioService {
               "SETOR",
               "EQUIPAMENTO",
               "FABRICANTE",
-              "MODELO",
-              "PATRIMÔNIO",
               "SERVICE TAG / S/N",
+              "IMEI 1 CELULAR",
+              "PATRIMÔNIO",
+              "MODELO",
+              "NÚMERO DE CHAMADO",
               "NÚMERO DE SÉRIE",
-              "IMEI 1",
+              "NOTA FISCAL ",
+              "NOTA FISCAL se",
               "MAC ADDRESS",
+              "LOCAL",
+              "STATUS",
+              "PRAZO",
+              "RECEBIDO",
+              "DEVOLUÇÃO",
+              "EQ.CED?",
+              "OBSERVAÇÃO",
               "LINHA CORPORATIVA",
               "PROCESSADOR",
-              "LOCALIZAÇÃO",
+              "DATA ATUALIZAÇÃO",
               "FOTOS RENOMEADAS"
       };
 
@@ -227,42 +237,40 @@ public class InventarioService {
 
         Colaborador colaborador = ativo.getColaborador();
 
-        row.createCell(0).setCellValue(ativo.getId() != null ? ativo.getId().toString() : "");
+        row.createCell(0).setCellValue(colaborador != null && colaborador.getMatricula() != null
+                ? colaborador.getMatricula()
+                : "");
         row.createCell(1)
                 .setCellValue(
-                        colaborador != null && colaborador.getMatricula() != null
-                                ? colaborador.getMatricula()
+                        colaborador != null && colaborador.getNome() != null
+                                ? colaborador.getNome()
                                 : "");
         row.createCell(2)
                 .setCellValue(
-                        colaborador != null && colaborador.getNome() != null ? colaborador.getNome() : "");
+                        colaborador != null && colaborador.getCargo() != null ? colaborador.getCargo() : "");
         row.createCell(3)
-                .setCellValue(
-                        colaborador != null && colaborador.getCargo() != null
-                                ? colaborador.getCargo()
-                                : "");
-        row.createCell(4)
                 .setCellValue(
                         colaborador != null && colaborador.getSetor() != null
                                 ? colaborador.getSetor()
                                 : "");
+        row.createCell(4)
+                .setCellValue(ativo.getTipoEquipamento() != null ? ativo.getTipoEquipamento().name() : "");
         row.createCell(5)
                 .setCellValue(
-                        ativo.getTipoEquipamento() != null ? ativo.getTipoEquipamento().name() : "");
-        row.createCell(6).setCellValue(ativo.getFabricante() != null ? ativo.getFabricante() : "");
-        row.createCell(7).setCellValue(ativo.getModelo() != null ? ativo.getModelo() : "");
+                        ativo.getFabricante() != null ? ativo.getFabricante() : "");
+        row.createCell(6).setCellValue(ativo.getServiceTagSerial() != null ? ativo.getServiceTagSerial() : "");
+        row.createCell(7).setCellValue(ativo.getImei1() != null ? ativo.getImei1() : "");
         row.createCell(8).setCellValue(ativo.getPatrimonio() != null ? ativo.getPatrimonio() : "");
         row.createCell(9)
-                .setCellValue(ativo.getServiceTagSerial() != null ? ativo.getServiceTagSerial() : "");
+                .setCellValue(ativo.getModelo() != null ? ativo.getModelo() : "");
         row.createCell(10)
-                .setCellValue(ativo.getNumeroSerie() != null ? ativo.getNumeroSerie() : "");
-        row.createCell(11).setCellValue(ativo.getImei1() != null ? ativo.getImei1() : "");
-        row.createCell(12).setCellValue(ativo.getMacAddress() != null ? ativo.getMacAddress() : "");
+                .setCellValue("N/A");
+        row.createCell(11).setCellValue(ativo.getNumeroSerie() != null ? ativo.getNumeroSerie() : "");
+        row.createCell(12).setCellValue("NF 1");
         row.createCell(13)
-                .setCellValue(ativo.getLinhaCorporativa() != null ? ativo.getLinhaCorporativa() : "");
+                .setCellValue("NF 2");
         row.createCell(14)
-                .setCellValue(ativo.getProcessador() != null ? ativo.getProcessador() : "");
-        row.createCell(15).setCellValue(ativo.getStatus() != null ? ativo.getStatus() : "");
+                .setCellValue(ativo.getMacAddress() != null ? ativo.getMacAddress() : "");
 
         String localizacao = "";
         List<String> fotosNomes = new ArrayList<>();
@@ -278,9 +286,21 @@ public class InventarioService {
           }
         }
 
-        row.createCell(16).setCellValue(localizacao);
+        row.createCell(15).setCellValue(localizacao);
+        row.createCell(16).setCellValue(ativo.getStatus() != null ? ativo.getStatus() : "");
+        row.createCell(17).setCellValue("PRAZO");
+        row.createCell(18).setCellValue("N/A");
+        row.createCell(19).setCellValue("N/A");
+        row.createCell(20).setCellValue("N/A");
+        row.createCell(21).setCellValue("N/A");
+        row.createCell(22).setCellValue("N/A");
+        row.createCell(23).setCellValue(ativo.getLinhaCorporativa() != null ? ativo.getLinhaCorporativa() : "");
+        row.createCell(24).setCellValue(ativo.getProcessador() != null ? ativo.getProcessador() : "");
+        row.createCell(25).setCellValue(ativo.getDataAtualizacao() != null ? ativo.getDataAtualizacao().toString() : "");
 
-        Cell cellFotos = row.createCell(17);
+
+
+        Cell cellFotos = row.createCell(26);
         cellFotos.setCellValue(String.join(", ", fotosNomes));
         cellFotos.setCellStyle(wrapStyle);
       }
