@@ -40,18 +40,16 @@ public class InventarioController {
     return ResponseEntity.ok(inventarioService.processarLote(request));
   }
 
-  @PostMapping("/exportar-excel")
-  public ResponseEntity<byte[]> exportarExcel(@RequestBody List<ItemInventarioResponse> itens)
-      throws IOException {
-    byte[] bytes = inventarioService.exportarExcel(itens);
+  @GetMapping("/exportar-excel")
+  public ResponseEntity<byte[]> exportarExcel() throws IOException {
+    byte[] excelBytes = inventarioService.exportarExcel();
 
     return ResponseEntity.ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=itens_inventario.xlsx")
-        .contentType(
-            MediaType.parseMediaType(
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-        .body(bytes);
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=inventario_t3_sbcr.xlsx")
+            .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            .body(excelBytes);
   }
+
   @GetMapping("/fotos/{nomeArquivo}")
   public ResponseEntity<Resource> exibirFoto(@PathVariable String nomeArquivo) {
     try {

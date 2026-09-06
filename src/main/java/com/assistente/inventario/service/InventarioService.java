@@ -177,7 +177,9 @@ public class InventarioService {
     return resultados;
   }
 
-  public byte[] exportarExcel(List<ItemInventarioResponse> itens) throws IOException {
+  public byte[] exportarExcel() throws IOException {
+    List<Ativo> ativos = ativoRepository.findAll();
+
     try (Workbook workbook = new XSSFWorkbook();
         ByteArrayOutputStream out = new ByteArrayOutputStream()) {
       Sheet sheet = workbook.createSheet("Inventário T3 SBCR");
@@ -220,34 +222,66 @@ public class InventarioService {
       }
 
       int rowIdx = 1;
-      for (ItemInventarioResponse item : itens) {
+      for (Ativo ativo : ativos) {
         Row row = sheet.createRow(rowIdx++);
-        row.createCell(0).setCellValue(item.matricula() != null ? item.matricula() : "");
-        row.createCell(1)
-            .setCellValue(item.nomeColaborador() != null ? item.nomeColaborador() : "");
-        row.createCell(2).setCellValue(item.cargo() != null ? item.cargo() : "");
-        row.createCell(3).setCellValue(item.setor() != null ? item.setor() : "");
-        row.createCell(4)
-            .setCellValue(item.tipoEquipamento() != null ? item.tipoEquipamento() : "");
-        row.createCell(5).setCellValue(item.fabricante() != null ? item.fabricante() : "");
-        row.createCell(6).setCellValue(item.modelo() != null ? item.modelo() : "");
-        row.createCell(7).setCellValue(item.patrimonio() != null ? item.patrimonio() : "");
-        row.createCell(8)
-            .setCellValue(item.serviceTagSerial() != null ? item.serviceTagSerial() : "");
-        row.createCell(9).setCellValue(item.numeroSerie() != null ? item.numeroSerie() : "");
-        row.createCell(10).setCellValue(item.imeil1() != null ? item.imeil1() : "");
-        row.createCell(11).setCellValue(item.macAddress() != null ? item.macAddress() : "");
-        row.createCell(12)
-            .setCellValue(item.linhaCorporativa() != null ? item.linhaCorporativa() : "");
-        row.createCell(13).setCellValue(item.processador() != null ? item.processador() : "");
-        row.createCell(14).setCellValue(item.localizacao() != null ? item.localizacao() : "");
 
-        String fotosConcatenadas =
-            item.nomesArquivosRenomeados() != null
-                ? String.join(", ", item.nomesArquivosRenomeados())
-                : "";
-        Cell cellFotos = row.createCell(15);
-        cellFotos.setCellValue(fotosConcatenadas);
+        Colaborador colaborador = ativo.getColaborador();
+
+        row.createCell(0).setCellValue(ativo.getId() != null ? ativo.getId().toString() : "");
+        row.createCell(1)
+            .setCellValue(
+                colaborador != null && colaborador.getMatricula() != null
+                    ? colaborador.getMatricula()
+                    : "");
+        row.createCell(2)
+            .setCellValue(
+                colaborador != null && colaborador.getNome() != null ? colaborador.getNome() : "");
+        row.createCell(3)
+            .setCellValue(
+                colaborador != null && colaborador.getCargo() != null
+                    ? colaborador.getCargo()
+                    : "");
+        row.createCell(4)
+            .setCellValue(
+                colaborador != null && colaborador.getSetor() != null
+                    ? colaborador.getSetor()
+                    : "");
+        row.createCell(5)
+            .setCellValue(
+                ativo.getTipoEquipamento() != null ? ativo.getTipoEquipamento().name() : "");
+        row.createCell(6).setCellValue(ativo.getFabricante() != null ? ativo.getFabricante() : "");
+        row.createCell(7).setCellValue(ativo.getModelo() != null ? ativo.getModelo() : "");
+        row.createCell(8).setCellValue(ativo.getPatrimonio() != null ? ativo.getPatrimonio() : "");
+        row.createCell(9)
+            .setCellValue(ativo.getServiceTagSerial() != null ? ativo.getServiceTagSerial() : "");
+        row.createCell(10)
+            .setCellValue(ativo.getNumeroSerie() != null ? ativo.getNumeroSerie() : "");
+        row.createCell(11).setCellValue(ativo.getImei1() != null ? ativo.getImei1() : "");
+        row.createCell(12).setCellValue(ativo.getMacAddress() != null ? ativo.getMacAddress() : "");
+        row.createCell(13)
+            .setCellValue(ativo.getLinhaCorporativa() != null ? ativo.getLinhaCorporativa() : "");
+        row.createCell(14)
+            .setCellValue(ativo.getProcessador() != null ? ativo.getProcessador() : "");
+        row.createCell(15).setCellValue(ativo.getStatus() != null ? ativo.getStatus() : "");
+
+        String localizacao = "";
+        List<String> fotosNomes = new ArrayList<>();
+
+        if (ativo.getFotos() != null && !ativo.getFotos().isEmpty()) {
+          for (RegistroInventario registro : ativo.getFotos()) {
+            if (registro.getNomeArquivoRenomeado() != null) {
+              fotosNomes.add(registro.getNomeArquivoRenomeado());
+            }
+            if (registro.getLocalizacao() != null && localizacao.isEmpty()) {
+              localizacao = registro.getLocalizacao();
+            }
+          }
+        }
+
+        row.createCell(16).setCellValue(localizacao);
+
+        Cell cellFotos = row.createCell(17);
+        cellFotos.setCellValue(String.join(", ", fotosNomes));
         cellFotos.setCellStyle(wrapStyle);
       }
 
