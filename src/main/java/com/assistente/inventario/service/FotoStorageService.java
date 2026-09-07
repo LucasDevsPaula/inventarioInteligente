@@ -35,22 +35,45 @@ public class FotoStorageService {
             ? nomeOriginal.substring(nomeOriginal.lastIndexOf("."))
             : ".jpg";
 
-    String identificador = "SEM_ID";
-    if (dados.patrimonio() != null && !dados.patrimonio().isBlank()) {
-      identificador = dados.patrimonio().trim();
-    } else if (dados.imei1() != null && !dados.imei1().isBlank()) {
-      identificador = dados.imei1().trim();
-    } else if (dados.serviceTagSerial() != null && !dados.serviceTagSerial().isBlank()) {
-      identificador = dados.serviceTagSerial().trim();
-    }
-
-    identificador = identificador.replaceAll("[\\\\/:*?\"<>|]", "_");
     String tipoFinal = (tipo != null && !tipo.isBlank()) ? tipo.toUpperCase().trim() : "OUTRO";
 
-    if (totalFotos > 1) {
-      return String.format("%s - %s - FOTO %d%s", tipoFinal, identificador, totalFotos, extensao);
+    String patrimonio = sanitizar(dados.patrimonio());
+
+    String serialOuImei = null;
+    if (dados.serviceTagSerial() != null && !dados.serviceTagSerial().isBlank()) {
+      serialOuImei = sanitizar(dados.serviceTagSerial());
+    } else if (dados.numeroSerie() != null && !dados.numeroSerie().isBlank()) {
+      serialOuImei = sanitizar(dados.numeroSerie());
+    } else if (dados.imei1() != null && !dados.imei1().isBlank()) {
+      serialOuImei = sanitizar(dados.imei1());
+    } else if (dados.macAddress() != null && !dados.macAddress().isBlank()) {
+      serialOuImei = sanitizar(dados.macAddress());
     }
-    return String.format("%s - %s%s", tipoFinal, identificador, extensao);
+
+    StringBuilder nomeBase = new StringBuilder(tipoFinal);
+    boolean temPatrimonio = (patrimonio != null && !patrimonio.isBlank());
+    boolean temSerial = (serialOuImei != null && !serialOuImei.isBlank());
+
+    if (temPatrimonio && temSerial) {
+      nomeBase.append(" - ").append(patrimonio).append(" - ").append(serialOuImei);
+    } else if (temPatrimonio) {
+      nomeBase.append(" - ").append(patrimonio);
+    } else if (temSerial) {
+      nomeBase.append(" - ").append(serialOuImei);
+    } else {
+      nomeBase.append(" - SEM_ID");
+    }
+
+    if (totalFotos > 1) {
+      nomeBase.append(" - FOTO ").append(indice);
+    }
+    nomeBase.append(extensao);
+    return nomeBase.toString();
+  }
+
+  public String sanitizar(String valor) {
+    if (valor == null) return null;
+    return valor.trim().replaceAll("[\\\\/:*?\"<>|]", "_");
   }
 
   public Path salvarFoto(MultipartFile file, String nomeFinal) throws IOException {
