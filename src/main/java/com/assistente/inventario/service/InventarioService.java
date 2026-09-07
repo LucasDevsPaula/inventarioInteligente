@@ -181,7 +181,7 @@ public class InventarioService {
     List<Ativo> ativos = ativoRepository.findAll();
 
     try (Workbook workbook = new XSSFWorkbook();
-         ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream()) {
       Sheet sheet = workbook.createSheet("Inventário T3 SBCR");
 
       CellStyle headerStyle = workbook.createCellStyle();
@@ -196,32 +196,30 @@ public class InventarioService {
       wrapStyle.setWrapText(true);
 
       String[] colunas = {
-              "MATRÍCULA",
-              "NOME",
-              "CARGO",
-              "SETOR",
-              "EQUIPAMENTO",
-              "FABRICANTE",
-              "SERVICE TAG / S/N",
-              "IMEI 1 CELULAR",
-              "PATRIMÔNIO",
-              "MODELO",
-              "NÚMERO DE CHAMADO",
-              "NÚMERO DE SÉRIE",
-              "NOTA FISCAL ",
-              "NOTA FISCAL se",
-              "MAC ADDRESS",
-              "LOCAL",
-              "STATUS",
-              "PRAZO",
-              "RECEBIDO",
-              "DEVOLUÇÃO",
-              "EQ.CED?",
-              "OBSERVAÇÃO",
-              "LINHA CORPORATIVA",
-              "PROCESSADOR",
-              "DATA ATUALIZAÇÃO",
-              "FOTOS RENOMEADAS"
+        "MATRÍCULA",
+        "NOME",
+        "CARGO",
+        "SETOR",
+        "EQUIPAMENTO",
+        "FABRICANTE",
+        "SERVICE TAG / S/N",
+        "IMEI 1 CELULAR",
+        "PATRIMÔNIO",
+        "MODELO",
+        "NÚMERO DE CHAMADO",
+        "NÚMERO DE SÉRIE",
+        "NOTA FISCAL ",
+        "NOTA FISCAL se",
+        "MAC ADDRESS",
+        "LOCAL",
+        "STATUS",
+        "PRAZO",
+        "RECEBIDO",
+        "DEVOLUÇÃO",
+        "EQ.CED?",
+        "OBSERVAÇÃO",
+        "LINHA CORPORATIVA",
+        "PROCESSADOR",
       };
 
       Row headerRow = sheet.createRow(0);
@@ -237,72 +235,50 @@ public class InventarioService {
 
         Colaborador colaborador = ativo.getColaborador();
 
-        row.createCell(0).setCellValue(colaborador != null && colaborador.getMatricula() != null
-                ? colaborador.getMatricula()
-                : "");
+        row.createCell(0)
+            .setCellValue(
+                colaborador != null && colaborador.getMatricula() != null
+                    ? colaborador.getMatricula()
+                    : "");
         row.createCell(1)
-                .setCellValue(
-                        colaborador != null && colaborador.getNome() != null
-                                ? colaborador.getNome()
-                                : "");
+            .setCellValue(
+                colaborador != null && colaborador.getNome() != null ? colaborador.getNome() : "");
         row.createCell(2)
-                .setCellValue(
-                        colaborador != null && colaborador.getCargo() != null ? colaborador.getCargo() : "");
+            .setCellValue(
+                colaborador != null && colaborador.getCargo() != null
+                    ? colaborador.getCargo()
+                    : "");
         row.createCell(3)
-                .setCellValue(
-                        colaborador != null && colaborador.getSetor() != null
-                                ? colaborador.getSetor()
-                                : "");
+            .setCellValue(
+                colaborador != null && colaborador.getSetor() != null
+                    ? colaborador.getSetor()
+                    : "");
         row.createCell(4)
-                .setCellValue(ativo.getTipoEquipamento() != null ? ativo.getTipoEquipamento().name() : "");
-        row.createCell(5)
-                .setCellValue(
-                        ativo.getFabricante() != null ? ativo.getFabricante() : "");
-        row.createCell(6).setCellValue(ativo.getServiceTagSerial() != null ? ativo.getServiceTagSerial() : "");
+            .setCellValue(
+                ativo.getTipoEquipamento() != null ? ativo.getTipoEquipamento().name() : "");
+        row.createCell(5).setCellValue(ativo.getFabricante() != null ? ativo.getFabricante() : "");
+        row.createCell(6)
+            .setCellValue(ativo.getServiceTagSerial() != null ? ativo.getServiceTagSerial() : "");
         row.createCell(7).setCellValue(ativo.getImei1() != null ? ativo.getImei1() : "");
         row.createCell(8).setCellValue(ativo.getPatrimonio() != null ? ativo.getPatrimonio() : "");
-        row.createCell(9)
-                .setCellValue(ativo.getModelo() != null ? ativo.getModelo() : "");
-        row.createCell(10)
-                .setCellValue("N/A");
-        row.createCell(11).setCellValue(ativo.getNumeroSerie() != null ? ativo.getNumeroSerie() : "");
+        row.createCell(9).setCellValue(ativo.getModelo() != null ? ativo.getModelo() : "");
+        row.createCell(10).setCellValue("N/A");
+        row.createCell(11)
+            .setCellValue(ativo.getNumeroSerie() != null ? ativo.getNumeroSerie() : "");
         row.createCell(12).setCellValue("NF 1");
-        row.createCell(13)
-                .setCellValue("NF 2");
-        row.createCell(14)
-                .setCellValue(ativo.getMacAddress() != null ? ativo.getMacAddress() : "");
-
-        String localizacao = "";
-        List<String> fotosNomes = new ArrayList<>();
-
-        if (ativo.getFotos() != null && !ativo.getFotos().isEmpty()) {
-          for (RegistroInventario registro : ativo.getFotos()) {
-            if (registro.getNomeArquivoRenomeado() != null) {
-              fotosNomes.add(registro.getNomeArquivoRenomeado());
-            }
-            if (registro.getLocalizacao() != null && localizacao.isEmpty()) {
-              localizacao = registro.getLocalizacao();
-            }
-          }
-        }
-
-        row.createCell(15).setCellValue(localizacao);
+        row.createCell(13).setCellValue("NF 2");
+        row.createCell(14).setCellValue(ativo.getMacAddress() != null ? ativo.getMacAddress() : "");
+        row.createCell(15).setCellValue("SBCR");
         row.createCell(16).setCellValue(ativo.getStatus() != null ? ativo.getStatus() : "");
         row.createCell(17).setCellValue("PRAZO");
         row.createCell(18).setCellValue("N/A");
         row.createCell(19).setCellValue("N/A");
         row.createCell(20).setCellValue("N/A");
         row.createCell(21).setCellValue("N/A");
-        row.createCell(22).setCellValue("N/A");
-        row.createCell(23).setCellValue(ativo.getLinhaCorporativa() != null ? ativo.getLinhaCorporativa() : "");
-        row.createCell(24).setCellValue(ativo.getProcessador() != null ? ativo.getProcessador() : "");
-        row.createCell(25).setCellValue(ativo.getDataAtualizacao() != null ? ativo.getDataAtualizacao().toString() : "");
-
-
-
-        Cell cellFotos = row.createCell(26);
-        cellFotos.setCellValue(String.join(", ", fotosNomes));
-        cellFotos.setCellStyle(wrapStyle);
+        row.createCell(22)
+            .setCellValue(ativo.getLinhaCorporativa() != null ? ativo.getLinhaCorporativa() : "");
+        row.createCell(23)
+            .setCellValue(ativo.getProcessador() != null ? ativo.getProcessador() : "");
       }
 
       for (int i = 0; i < colunas.length; i++) {

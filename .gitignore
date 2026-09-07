@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 src/main/resources/application.yaml
-
+fotos_inventario
 ### STS ###
 .apt_generated
 .classpath
