@@ -26,7 +26,7 @@ public interface AtivoRepository extends JpaRepository<Ativo, Long> {
 """
     SELECT a FROM Ativo a
     WHERE (:patrimonio IS NOT NULL AND a.patrimonio = :patrimonio)
-    OR (:serviceTagSerial IS NOT NULL AND LOWER(a.serviceTagSerial) = LOWER(:serviceTagSerial))
+    OR (:serviceTagSerial IS NOT NULL AND a.serviceTagSerial = :serviceTagSerial)
     OR (:imei1 IS NOT NULL AND a.imei1 = :imei1)
 """)
   Optional<Ativo> buscarExistente(

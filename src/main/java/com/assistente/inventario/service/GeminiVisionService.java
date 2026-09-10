@@ -48,7 +48,7 @@ public class GeminiVisionService {
                 3. "modelo": Nome ou código do modelo comercial (se celular, identifique via TAC do IMEI; se Dell, pelo padrão do gabinete/etiqueta).
                 4. "patrimonio": Número do patrimônio impresso sob código de barras ou QR code (apenas dígitos). Se não tiver, retorne null.
                 5. "serviceTagSerial": Se Dell, a Service Tag (ex: 4VP7TY3). Se outro fabricante, o Serial Number principal.
-                6. "numeroSerie": Se Dell, o Express Service Code (ex: 10623936603). Se outro fabricante, o S/N secundário.
+                6. "numeroSerie": Se Dell, o Express Service Code (ex: 10623936603) e em monitor e switch (ex: S/N: BR-067NW4-TVB00-310-2S6L-A00). Se outro fabricante, o S/N secundário.
                 7. "imei1": Se for smartphone, o código IMEI 1 (ex: 352790349102699).
                 8. "macAddress": Endereço MAC de rede se estiver visível na etiqueta.
                 9. "linhaCorporativa": Número de telefone/chip corporativo se visível na tela (ex: Vivo - (11) 91450-9855).

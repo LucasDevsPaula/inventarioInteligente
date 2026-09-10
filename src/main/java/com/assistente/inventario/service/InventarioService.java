@@ -1,9 +1,6 @@
 package com.assistente.inventario.service;
 
-import com.assistente.inventario.dto.CadastroItemRequest;
-import com.assistente.inventario.dto.CadastroLoteRequest;
-import com.assistente.inventario.dto.DadosExtraidosFotoDto;
-import com.assistente.inventario.dto.ItemInventarioResponse;
+import com.assistente.inventario.dto.*;
 import com.assistente.inventario.model.Ativo;
 import com.assistente.inventario.model.Colaborador;
 import com.assistente.inventario.model.RegistroInventario;
@@ -82,9 +79,11 @@ public class InventarioService {
                             .setor(request.setor())
                             .build()));
 
+    String patrimonio = dadosIa.patrimonio() != null ? dadosIa.patrimonio().trim() : null;
+    String serviceTagSerial = dadosIa.serviceTagSerial() != null ? dadosIa.serviceTagSerial().trim().toUpperCase() : null;
+    String imei1 = dadosIa.imei1() != null ? dadosIa.imei1().trim() : null;
     Optional<Ativo> ativoExistente =
-        ativoRepository.buscarExistente(
-            dadosIa.patrimonio(), dadosIa.serviceTagSerial(), dadosIa.imei1());
+        ativoRepository.buscarExistente(patrimonio, serviceTagSerial, imei1);
 
     Ativo ativo = ativoExistente.orElseGet(Ativo::new);
     ativo.setColaborador(colaborador);
@@ -96,6 +95,7 @@ public class InventarioService {
     ativo.setNumeroSerie(dadosIa.numeroSerie());
     ativo.setImei1(dadosIa.imei1());
     ativo.setMacAddress(dadosIa.macAddress());
+    ativo.setLinhaCorporativa(dadosIa.linhaCorporativa());
     ativo.setProcessador(dadosIa.processador());
     ativo.setStatus("EM_USO");
 
@@ -153,12 +153,17 @@ public class InventarioService {
         LocalDateTime.now());
   }
 
-  public List<ItemInventarioResponse> processarLote(CadastroLoteRequest request) {
-    List<ItemInventarioResponse> resultados = new ArrayList<>();
-    if (request.fotos() == null) return resultados;
+  public ProcessarLoteResponse processarLote(CadastroLoteRequest request) {
+    List<ItemLoteResultado> resultados = new ArrayList<>();
+    if (request.fotos() == null || request.fotos().isEmpty()) {
+      return new ProcessarLoteResponse(0, 0, 0, resultados);
+    }
 
     for (MultipartFile foto : request.fotos()) {
-      if (foto == null || foto.isEmpty()) continue;
+      if (foto == null || foto.isEmpty()) {
+        resultados.add(new  ItemLoteResultado(false, null, "Foto vazia ou inválida"));
+        continue;
+      }
       try {
         // Em lote cada item será independente
         CadastroItemRequest itemRequest =
@@ -169,12 +174,22 @@ public class InventarioService {
                 request.setor(),
                 request.tipoEquipamento(),
                 List.of(foto));
-        resultados.add(processarItem(itemRequest));
+        ItemInventarioResponse payload = processarItem(itemRequest);
+        resultados.add(new ItemLoteResultado(true, payload, null ));
       } catch (Exception e) {
         log.error("Erro ao processar foto individual do lote: {}", foto.getOriginalFilename(), e);
+        resultados.add(new ItemLoteResultado(
+                false,
+                null,
+                "Falha ao processar" + foto.getOriginalFilename() + ": " + e.getMessage()
+        ));
       }
     }
-    return resultados;
+    int total = resultados.size();
+    int sucesso = (int) resultados.stream().filter(ItemLoteResultado::ok).count();
+    int falha = total - sucesso;
+
+    return new ProcessarLoteResponse(total, sucesso, falha, resultados);
   }
 
   public byte[] exportarExcel() throws IOException {

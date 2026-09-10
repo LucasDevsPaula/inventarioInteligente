@@ -20,11 +20,14 @@ public enum TipoEquipamento {
     FIREWALL,
     LEITOR_BIOMETRICO,
     MONITOR_FID,
-    NOBRAK,
+    NOBREAK,
     RACK,
     STORAGE,
     TBOX,
     TABLET,
     TELEFONE,
+    GBIC,
+    MOCHILA,
+    FID,
     OUTRO
 }

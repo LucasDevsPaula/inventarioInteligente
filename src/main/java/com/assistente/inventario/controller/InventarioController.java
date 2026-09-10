@@ -3,6 +3,7 @@ package com.assistente.inventario.controller;
 import com.assistente.inventario.dto.CadastroItemRequest;
 import com.assistente.inventario.dto.CadastroLoteRequest;
 import com.assistente.inventario.dto.ItemInventarioResponse;
+import com.assistente.inventario.dto.ProcessarLoteResponse;
 import com.assistente.inventario.service.FotoStorageService;
 import com.assistente.inventario.service.InventarioService;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +36,13 @@ public class InventarioController {
   }
 
   @PostMapping(value = "/processar-lotes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<List<ItemInventarioResponse>> processarLotes(
+  public ResponseEntity<ProcessarLoteResponse> processarLotes(
       @ModelAttribute CadastroLoteRequest request) {
-    return ResponseEntity.ok(inventarioService.processarLote(request));
+    ProcessarLoteResponse response =  inventarioService.processarLote(request);
+    if(response.falha() == 0){
+      return ResponseEntity.ok(response);
+    }
+    return ResponseEntity.status(207).body(response);
   }
 
   @GetMapping("/exportar-excel")
