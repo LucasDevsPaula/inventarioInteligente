@@ -64,6 +64,22 @@ public class FotoStorageService {
       nomeBase.append(" - SEM_ID");
     }
 
+    boolean semId = !temPatrimonio && !temSerial;
+
+    if (semId) {
+      String baseSemId = tipoFinal + " - SEM_ID";
+      String sufixoFoto = (totalFotos > 1) ? " - FOTO " + indice : "";
+      int seq = 1;
+      String candidato;
+
+      do{
+        candidato = baseSemId + "_" + seq + sufixoFoto + extensao;
+        seq++;
+      }while (Files.exists(diretorioDestino.resolve(candidato)));
+
+      return candidato;
+    }
+
     if (totalFotos > 1) {
       nomeBase.append(" - FOTO ").append(indice);
     }
